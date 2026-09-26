@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+
+# ═══════════════════════════════════════════════
+# NEVER commit movie files to the repository!
+# Movies must stay in Google Drive.
+# ═══════════════════════════════════════════════
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+*.m4v
+*.3gp
+*.ogv
+*.ts
+!src/**/*.ts
+!src/**/*.tsx
+
+# Large images (posters should be URLs, not local files)
+*.bmp
+*.tiff
