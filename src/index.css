@@ -1677,3 +1677,47 @@ select:focus-visible {
     --focus-glow: rgba(255, 255, 255, 0.5);
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LAPTOP / PC PLAYER UI DIFFERENTIATION
+   ═══════════════════════════════════════════════════════════════ */
+@media (pointer: fine) and (min-width: 1024px) {
+  .player-btn {
+    min-width: 36px;
+    min-height: 36px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-sm);
+  }
+  
+  .player-btn-play {
+    width: 44px;
+    height: 44px;
+    font-size: var(--font-size-lg);
+  }
+  
+  .player-bottom-bar {
+    padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md);
+  }
+  
+  .player-controls-row {
+    gap: var(--spacing-sm);
+  }
+  
+  .player-time {
+    font-size: var(--font-size-xs);
+  }
+  
+  /* Subtler interactions on PC since we have a mouse */
+  [data-focusable="true"]:focus-visible,
+  .player-btn:focus-visible {
+    box-shadow: 0 0 0 2px var(--accent-primary);
+    transform: none;
+    border-color: transparent;
+  }
+  
+  .player-btn:hover {
+    transform: none;
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
