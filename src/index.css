@@ -1496,12 +1496,19 @@ select:focus-visible {
   }
 
   .details-poster-container {
-    width: 200px;
+    width: 60%;
+    max-width: 280px;
     margin: 0 auto;
+  }
+
+  .details-meta {
+    flex-wrap: wrap;
+    font-size: var(--font-size-base);
   }
 
   .details-info {
     padding-top: 0;
+    text-align: center;
   }
 
   .details-actions {
@@ -1521,6 +1528,17 @@ select:focus-visible {
 
   .player-controls-row {
     flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .player-controls-left, .player-controls-right {
+    justify-content: center;
+    width: 100%;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .player-time {
+    display: none; /* Hide time on small phones if cramped, or keep it inside the progress bar */
   }
 
   .form-row {
