@@ -103,116 +103,32 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   return (
     <div className="player-container">
-      {/* Direct HTML5 Video Player */}
-      {playerMode === 'direct' && (
-        <>
-          {isLoading && (
-            <div className="player-loading">
-              <div className="loading-spinner large" />
-              <p>Loading video...</p>
-            </div>
-          )}
-          <video
-            ref={videoRef}
-            className="player-video"
-            src={getDirectStreamUrl()}
-            playsInline
-            preload="metadata"
-          />
-          <PlayerControls
-            videoRef={videoRef}
-            onBack={onBack}
-            title={movie.title}
-          />
-        </>
-      )}
-
-      {/* Google Drive Preview/Embedded Player */}
-      {playerMode === 'preview' && (
-        <>
-          <div className="player-top-bar-standalone">
-            <button
-              className="player-btn player-back-btn"
-              onClick={onBack}
-              data-focusable="true"
-              aria-label="Go back"
-            >
-              ← Back
-            </button>
-            <div className="player-title">{movie.title}</div>
-            <button
-              className="player-btn"
-              onClick={handleOpenInDrive}
-              data-focusable="true"
-              aria-label="Open in Google Drive"
-            >
-              Open in Drive ↗
-            </button>
-          </div>
-          {isLoading && (
-            <div className="player-loading">
-              <div className="loading-spinner large" />
-              <p>Loading Drive player...</p>
-            </div>
-          )}
-          <iframe
-            className="player-iframe"
-            src={previewUrl}
-            title={`${movie.title} - Google Drive Player`}
-            allow="autoplay; encrypted-media; fullscreen"
-            allowFullScreen
-            onLoad={() => setIsLoading(false)}
-          />
-          <div className="drive-player-notice">
-            <p>
-              Using Google Drive's built-in player. Custom controls are not available in this mode.
-              Playback progress will not be saved automatically.
-            </p>
-          </div>
-        </>
-      )}
-
-      {/* Error / Fallback State */}
-      {playerMode === 'error' && (
-        <div className="player-error">
-          <button
-            className="player-btn player-back-btn error-back"
-            onClick={onBack}
-            data-focusable="true"
-            aria-label="Go back"
-          >
-            ← Back
-          </button>
-          <div className="player-error-content">
-            <div className="player-error-icon">⚠️</div>
-            <h2>Playback Unavailable</h2>
-            <p className="player-error-message">{errorMessage}</p>
-            <div className="player-error-actions">
-              <button
-                className="btn-primary btn-large"
-                onClick={handleRetry}
-                data-focusable="true"
-              >
-                🔄 Try Again
-              </button>
-              <button
-                className="btn-secondary btn-large"
-                onClick={handleOpenDrivePlayer}
-                data-focusable="true"
-              >
-                ▶ Open Drive Player
-              </button>
-              <button
-                className="btn-secondary btn-large"
-                onClick={handleOpenInDrive}
-                data-focusable="true"
-              >
-                ↗ Open in Google Drive
-              </button>
-            </div>
-          </div>
+      {isLoading && (
+        <div className="player-loading">
+          <div className="loading-spinner large" />
+          <p>Loading video stream...</p>
         </div>
       )}
+      {errorMessage && (
+        <div className="player-error-toast" style={{
+          position: 'absolute', top: 20, right: 20, background: 'rgba(255,0,0,0.8)', color: 'white', padding: '10px 20px', borderRadius: 8, zIndex: 9999
+        }}>
+          {errorMessage}
+        </div>
+      )}
+      <video
+        ref={videoRef}
+        className="player-video"
+        src={getDirectStreamUrl()}
+        playsInline
+        preload="metadata"
+        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+      />
+      <PlayerControls
+        videoRef={videoRef}
+        onBack={onBack}
+        title={movie.title}
+      />
     </div>
   );
 };
