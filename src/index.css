@@ -6,25 +6,25 @@
 /* ─── CSS Variables / Design Tokens ─── */
 :root {
   /* Colors */
-  --bg-primary: #0a0a14;
-  --bg-secondary: #12121f;
-  --bg-card: #1a1a2e;
-  --bg-card-hover: #222240;
-  --bg-surface: #16162b;
+  --bg-primary: #141414;
+  --bg-secondary: #000000;
+  --bg-card: #181818;
+  --bg-card-hover: #2f2f2f;
+  --bg-surface: #181818;
   --bg-overlay: rgba(0, 0, 0, 0.85);
 
-  --text-primary: #eaeaf5;
-  --text-secondary: #9a9ab8;
-  --text-muted: #6a6a88;
-  --text-accent: #c8a2ff;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --text-muted: #808080;
+  --text-accent: #ffffff;
 
-  --accent-primary: #7c3aed;
-  --accent-secondary: #a855f7;
-  --accent-glow: rgba(124, 58, 237, 0.35);
-  --accent-gradient: linear-gradient(135deg, #7c3aed, #c084fc);
+  --accent-primary: #e50914;
+  --accent-secondary: #b81d24;
+  --accent-glow: rgba(229, 9, 20, 0.35);
+  --accent-gradient: linear-gradient(135deg, #e50914, #b81d24);
 
-  --focus-ring: #a855f7;
-  --focus-glow: rgba(168, 85, 247, 0.5);
+  --focus-ring: #ffffff;
+  --focus-glow: rgba(255, 255, 255, 0.2);
 
   --success: #34d399;
   --error: #f87171;
@@ -43,10 +43,10 @@
   --spacing-3xl: 64px;
 
   /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
   --radius-full: 9999px;
 
   /* Typography */
@@ -476,7 +476,7 @@ select:focus-visible {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #1e1e3a 0%, #2a1a4a 50%, #1a1a30 100%);
+  background: linear-gradient(145deg, #181818 0%, #2f2f2f 50%, #141414 100%);
   gap: var(--spacing-md);
   padding: var(--spacing-md);
 }
@@ -662,7 +662,7 @@ select:focus-visible {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #1e1e3a 0%, #2a1a4a 50%, #1a1a30 100%);
+  background: linear-gradient(145deg, #181818 0%, #2f2f2f 50%, #141414 100%);
   gap: var(--spacing-md);
   padding: var(--spacing-xl);
 }
