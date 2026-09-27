@@ -98,14 +98,24 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               position: 'absolute', top: 80, left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.9)', border: '1px solid #ff4444', color: 'white', padding: '20px', borderRadius: 8, zIndex: 9999, textAlign: 'center', maxWidth: 600
             }}>
               <p style={{ margin: '0 0 15px 0' }}>{errorMessage}</p>
-              <button 
-                className="btn-primary" 
-                onClick={() => setPlayerMode('preview')}
-                style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
-                data-focusable="true"
-              >
-                ▶ Play with Google Drive Player
-              </button>
+              <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button 
+                  className="btn-primary" 
+                  onClick={() => setPlayerMode('preview')}
+                  style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
+                  data-focusable="true"
+                >
+                  ▶ Google Drive Player
+                </button>
+                <a
+                  href={`vlc://https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&key=${appConfig.googleApiKey}`}
+                  className="btn-secondary"
+                  style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
+                  data-focusable="true"
+                >
+                  🟠 Open in VLC App
+                </a>
+              </div>
             </div>
           )}
           <video

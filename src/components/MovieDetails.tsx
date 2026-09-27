@@ -2,6 +2,7 @@ import React from 'react';
 import type { Movie } from '../types/movie';
 import { getProgress, formatTime, clearProgress } from '../services/playback';
 import { saveMetadataOverride } from '../services/metadata';
+import appConfig from '../config/appConfig';
 
 interface MovieDetailsProps {
   movie: Movie;
@@ -128,6 +129,14 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
                 ▶ Play
               </button>
             )}
+            <a
+              href={`vlc://https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&key=${appConfig.googleApiKey}`}
+              className="btn-secondary btn-large"
+              style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+              data-focusable="true"
+            >
+              🟠 Open in VLC Player
+            </a>
           </div>
 
           {/* Video format notice */}
