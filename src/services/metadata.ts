@@ -1,8 +1,5 @@
-/**
- * Local metadata service
- * Stores custom movie names (and optional metadata) locally in the browser
- * so we don't need a Google Sheet to rename files.
- */
+import { clearCatalogCache } from './movieCatalog';
+
 export interface MovieMetadataOverride {
   title?: string;
   posterUrl?: string;
@@ -33,6 +30,8 @@ export function saveMetadataOverride(movieId: string, override: MovieMetadataOve
     // Merge existing override if any
     all[movieId] = { ...all[movieId], ...override };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+    // Clear movie cache so the new metadata is applied on the next load
+    clearCatalogCache();
   } catch (e) {
     console.error('Could not save metadata override', e);
   }
