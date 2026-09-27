@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Movie } from '../types/movie';
 import { getProgress, formatTime, clearProgress } from '../services/playback';
+import { saveMetadataOverride } from '../services/metadata';
 
 interface MovieDetailsProps {
   movie: Movie;
@@ -60,6 +61,34 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
                 <span className="details-category">{movie.category}</span>
               </>
             )}
+            <button
+              className="btn-text"
+              onClick={() => {
+                const newTitle = window.prompt('Enter correct movie title:', movie.title);
+                if (newTitle !== null && newTitle.trim() !== '') {
+                  saveMetadataOverride(movie.driveFileId, { title: newTitle.trim() });
+                  window.location.reload();
+                }
+              }}
+              style={{ marginLeft: '15px', color: 'var(--accent-primary)', cursor: 'pointer', background: 'none', border: 'none', fontSize: '14px' }}
+              data-focusable="true"
+            >
+              ✎ Edit Title
+            </button>
+            <button
+              className="btn-text"
+              onClick={() => {
+                const newUrl = window.prompt('Paste a direct link to an image for the poster:', movie.posterUrl || '');
+                if (newUrl !== null) {
+                  saveMetadataOverride(movie.driveFileId, { posterUrl: newUrl.trim() });
+                  window.location.reload();
+                }
+              }}
+              style={{ marginLeft: '15px', color: 'var(--accent-primary)', cursor: 'pointer', background: 'none', border: 'none', fontSize: '14px' }}
+              data-focusable="true"
+            >
+              🖼️ Fix Poster
+            </button>
           </div>
 
           {movie.description && (
