@@ -13,7 +13,7 @@ const appConfig: AppConfig = {
   googleApiKey: 'AIzaSyAaEQUd7kVPStmIxwbtQMD9ZWwbhZlHzhg',
 
   // Display name for your movie library
-  siteName: 'Family Movies',
+  siteName: 'NanduRulz',
 
   // Catalog mode: always drive for this setup
   catalogMode: { type: 'drive' },

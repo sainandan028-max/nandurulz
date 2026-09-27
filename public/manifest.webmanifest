@@ -1,13 +1,13 @@
 {
-  "name": "Family Movies",
-  "short_name": "Movies",
+  "name": "NanduRulz",
+  "short_name": "NanduRulz",
   "description": "Your private family movie library powered by Google Drive",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "landscape",
-  "background_color": "#141414",
-  "theme_color": "#141414",
+  "background_color": "#0f171e",
+  "theme_color": "#0f171e",
   "icons": [
     {
       "src": "icons/icon-192.svg",

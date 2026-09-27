@@ -1,4 +1,4 @@
-# 🎬 Family Movies
+# 🎬 NanduRulz
 
 > A private family movie library — stream your movie collection directly from Google Drive with a beautiful, TV-friendly interface hosted for free on GitHub Pages.
 
