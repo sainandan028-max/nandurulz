@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { ViewMode } from '../types/movie';
 import { formatTime } from '../services/playback';
+import { useRemoteNavigation } from '../hooks/useRemoteNavigation';
 
 interface PlayerControlsProps {
   videoRef: React.RefObject<HTMLVideoElement | null>;
@@ -29,6 +30,18 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({ videoRef, onBack, title
       }, 4000);
     }
   }, [isPlaying]);
+
+  useRemoteNavigation({
+    enabled: showControls,
+    containerRef: controlsRef,
+    onBack: () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        onBack();
+      }
+    }
+  });
 
   // Sync with video element
   useEffect(() => {
@@ -97,27 +110,41 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({ videoRef, onBack, title
       switch (e.key) {
         case ' ':
         case 'Enter':
-          e.preventDefault();
-          if (video.paused) video.play();
-          else video.pause();
+          if (!showControls) {
+            e.preventDefault();
+            if (video.paused) video.play();
+            else video.pause();
+          }
+          // If controls are shown, useRemoteNavigation handles Enter
           break;
         case 'ArrowLeft':
-          e.preventDefault();
-          video.currentTime = Math.max(0, video.currentTime - 10);
-          showControlsTemporarily();
+          if (!showControls) {
+            e.preventDefault();
+            video.currentTime = Math.max(0, video.currentTime - 10);
+            showControlsTemporarily();
+          }
           break;
         case 'ArrowRight':
-          e.preventDefault();
-          video.currentTime = Math.min(video.duration, video.currentTime + 10);
-          showControlsTemporarily();
+          if (!showControls) {
+            e.preventDefault();
+            video.currentTime = Math.min(video.duration, video.currentTime + 10);
+            showControlsTemporarily();
+          }
           break;
         case 'ArrowUp':
-          e.preventDefault();
-          showControlsTemporarily();
+          if (!showControls) {
+            e.preventDefault();
+            showControlsTemporarily();
+          }
           break;
         case 'ArrowDown':
-          e.preventDefault();
-          setShowControls((prev) => !prev);
+          if (!showControls) {
+            e.preventDefault();
+            showControlsTemporarily();
+          } else {
+            e.preventDefault();
+            setShowControls(false);
+          }
           break;
         case 'f':
         case 'F':
@@ -130,19 +157,15 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({ videoRef, onBack, title
           toggleMute();
           break;
         case 'Escape':
-          e.preventDefault();
-          if (document.fullscreenElement) {
-            document.exitFullscreen();
-          } else {
-            onBack();
-          }
-          break;
         case 'Backspace':
-          e.preventDefault();
-          if (document.fullscreenElement) {
-            document.exitFullscreen();
-          } else {
-            onBack();
+          // useRemoteNavigation handles Backspace/Escape when controls are visible
+          if (!showControls) {
+            e.preventDefault();
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            } else {
+              onBack();
+            }
           }
           break;
       }
