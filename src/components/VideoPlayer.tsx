@@ -134,6 +134,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
             title={`${movie.title} - Google Drive Player`}
             allow="autoplay; encrypted-media; fullscreen"
             allowFullScreen
+            tabIndex={0}
+            ref={(el) => {
+              if (el) {
+                // Attempt to force focus onto the iframe for Silk browser
+                setTimeout(() => el.focus(), 500);
+              }
+            }}
+            onLoad={(e) => {
+              setIsLoading(false);
+              const target = e.target as HTMLIFrameElement;
+              target.focus();
+            }}
             style={{ width: '100%', height: '100%', border: 'none' }}
           />
         </>
