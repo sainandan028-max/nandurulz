@@ -32,7 +32,7 @@ export async function listDriveFolderVideos(): Promise<DriveFile[]> {
     throw new Error('Google API key is not configured.');
   }
 
-  const query = `'${driveFolderId}' in parents and trashed=false and mimeType contains 'video/'`;
+  const query = `'${driveFolderId}' in parents and trashed=false and (mimeType contains 'video/' or name contains '.mkv' or name contains '.mp4' or name contains '.avi')`;
 
   const params = new URLSearchParams({
     q: query,
