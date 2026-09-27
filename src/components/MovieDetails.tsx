@@ -130,7 +130,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
               </button>
             )}
             <a
-              href={`vlc://https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&key=${appConfig.googleApiKey}`}
+              href={`intent://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&key=${appConfig.googleApiKey}#Intent;package=org.videolan.vlc;scheme=https;type=video/*;end`}
               className="btn-secondary btn-large"
               style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               data-focusable="true"

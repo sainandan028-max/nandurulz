@@ -135,7 +135,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   ▶ Google Drive Player
                 </button>
                 <a
-                  href={`vlc://https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&key=${appConfig.googleApiKey}`}
+                  href={`intent://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&key=${appConfig.googleApiKey}#Intent;package=org.videolan.vlc;scheme=https;type=video/*;end`}
                   className="btn-secondary"
                   style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
                   data-focusable="true"
