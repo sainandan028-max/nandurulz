@@ -113,7 +113,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
                   data-focusable="true"
                 >
-                  🟠 Open in VLC App
+                  🟠 Open in VLC (TV/Mobile)
                 </a>
               </div>
             </div>

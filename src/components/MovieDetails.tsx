@@ -135,7 +135,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
               style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               data-focusable="true"
             >
-              🟠 Open in VLC Player
+              🟠 Open in VLC (TV/Mobile)
             </a>
           </div>
 
