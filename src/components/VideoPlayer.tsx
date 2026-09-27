@@ -4,6 +4,7 @@ import { getDrivePreviewUrl, getDriveViewUrl } from '../services/drive';
 import { getProgress } from '../services/playback';
 import { usePlaybackProgress } from '../hooks/usePlaybackProgress';
 import PlayerControls from './PlayerControls';
+import appConfig from '../config/appConfig';
 
 interface VideoPlayerProps {
   movie: Movie;
@@ -33,8 +34,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   // Build the direct URL using a streaming-compatible approach
   const getDirectStreamUrl = useCallback(() => {
-    // Use the Google Drive direct download link
-    return `https://drive.google.com/uc?export=download&id=${movie.driveFileId}`;
+    // Use the Drive API alt=media endpoint to bypass the virus scan HTML page
+    return `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&key=${appConfig.googleApiKey}`;
   }, [movie.driveFileId]);
 
   // Set initial time after video loads metadata
