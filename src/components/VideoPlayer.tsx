@@ -19,7 +19,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   startFromBeginning = false,
   onBack,
 }) => {
-  const [playerMode, setPlayerMode] = useState<PlayerMode>('direct');
+  const [playerMode, setPlayerMode] = useState<'direct' | 'preview'>('direct');
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -61,9 +61,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
     const handleError = () => {
       setIsLoading(false);
-      setPlayerMode('error');
       setErrorMessage(
-        'Direct playback is unavailable. This can happen due to browser restrictions, file format incompatibility, or Google Drive access limitations.'
+        'Direct playback is unavailable (likely an unsupported format like MKV on a PC browser). You can use the Drive Player instead.'
       );
     };
 
@@ -82,54 +81,63 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     };
   }, [movie.driveFileId, startFromBeginning, playerMode]);
 
-  const handleRetry = () => {
-    setPlayerMode('direct');
-    setIsLoading(true);
-    setErrorMessage('');
-    hasSetInitialTime.current = false;
-  };
-
-  const handleOpenDrivePlayer = () => {
-    setPlayerMode('preview');
-    setIsLoading(true);
-    setErrorMessage('');
-  };
-
-  const handleOpenInDrive = () => {
-    const url = getDriveViewUrl(movie.driveFileId, movie.resourceKey);
-    window.open(url, '_blank');
-  };
-
   const previewUrl = getDrivePreviewUrl(movie.driveFileId, movie.resourceKey);
 
   return (
     <div className="player-container">
-      {isLoading && (
-        <div className="player-loading">
-          <div className="loading-spinner large" />
-          <p>Loading video stream...</p>
-        </div>
+      {playerMode === 'direct' ? (
+        <>
+          {isLoading && (
+            <div className="player-loading">
+              <div className="loading-spinner large" />
+              <p>Loading video stream...</p>
+            </div>
+          )}
+          {errorMessage && (
+            <div className="player-error-toast" style={{
+              position: 'absolute', top: 80, left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.9)', border: '1px solid #ff4444', color: 'white', padding: '20px', borderRadius: 8, zIndex: 9999, textAlign: 'center', maxWidth: 600
+            }}>
+              <p style={{ margin: '0 0 15px 0' }}>{errorMessage}</p>
+              <button 
+                className="btn-primary" 
+                onClick={() => setPlayerMode('preview')}
+                style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
+                data-focusable="true"
+              >
+                ▶ Play with Google Drive Player
+              </button>
+            </div>
+          )}
+          <video
+            ref={videoRef}
+            className="player-video"
+            src={getDirectStreamUrl()}
+            playsInline
+            preload="metadata"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          />
+          <PlayerControls
+            videoRef={videoRef}
+            onBack={onBack}
+            title={movie.title}
+          />
+        </>
+      ) : (
+        <>
+          <div className="player-top-bar-standalone" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50, background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)', padding: '20px' }}>
+            <button className="player-btn player-back-btn" onClick={onBack} data-focusable="true" style={{ fontSize: '18px' }}>← Back</button>
+            <span style={{ color: 'white', marginLeft: 20, fontSize: '18px', fontWeight: 'bold' }}>{movie.title} (Drive Player)</span>
+          </div>
+          <iframe
+            className="player-iframe"
+            src={previewUrl}
+            title={`${movie.title} - Google Drive Player`}
+            allow="autoplay; encrypted-media; fullscreen"
+            allowFullScreen
+            style={{ width: '100%', height: '100%', border: 'none' }}
+          />
+        </>
       )}
-      {errorMessage && (
-        <div className="player-error-toast" style={{
-          position: 'absolute', top: 20, right: 20, background: 'rgba(255,0,0,0.8)', color: 'white', padding: '10px 20px', borderRadius: 8, zIndex: 9999
-        }}>
-          {errorMessage}
-        </div>
-      )}
-      <video
-        ref={videoRef}
-        className="player-video"
-        src={getDirectStreamUrl()}
-        playsInline
-        preload="metadata"
-        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-      />
-      <PlayerControls
-        videoRef={videoRef}
-        onBack={onBack}
-        title={movie.title}
-      />
     </div>
   );
 };
