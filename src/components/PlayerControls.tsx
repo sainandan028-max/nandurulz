@@ -97,6 +97,15 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({ videoRef, onBack, title
     };
   }, [showControlsTemporarily]);
 
+  // Auto-hide when play state changes to true
+  useEffect(() => {
+    if (isPlaying) {
+      showControlsTemporarily();
+    } else {
+      setShowControls(true);
+    }
+  }, [isPlaying, showControlsTemporarily]);
+
   // Keyboard controls for player
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {

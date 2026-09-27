@@ -22,8 +22,35 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [playerMode, setPlayerMode] = useState<'direct' | 'preview'>('direct');
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showStandaloneBar, setShowStandaloneBar] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasSetInitialTime = useRef(false);
+  const standaloneTimerRef = useRef<number | null>(null);
+
+  // Auto-hide standalone bar
+  const showStandaloneBarTemporarily = useCallback(() => {
+    setShowStandaloneBar(true);
+    if (standaloneTimerRef.current) clearTimeout(standaloneTimerRef.current);
+    standaloneTimerRef.current = window.setTimeout(() => {
+      setShowStandaloneBar(false);
+    }, 4000);
+  }, []);
+
+  useEffect(() => {
+    if (playerMode === 'preview') {
+      showStandaloneBarTemporarily();
+      const handleActivity = () => showStandaloneBarTemporarily();
+      window.addEventListener('mousemove', handleActivity);
+      window.addEventListener('touchstart', handleActivity);
+      window.addEventListener('keydown', handleActivity);
+      return () => {
+        window.removeEventListener('mousemove', handleActivity);
+        window.removeEventListener('touchstart', handleActivity);
+        window.removeEventListener('keydown', handleActivity);
+        if (standaloneTimerRef.current) clearTimeout(standaloneTimerRef.current);
+      };
+    }
+  }, [playerMode, showStandaloneBarTemporarily]);
 
   // Playback progress tracking
   usePlaybackProgress({
@@ -134,10 +161,24 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </>
       ) : (
         <>
-          <div className="player-top-bar-standalone" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50, background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)', padding: '20px' }}>
+          <div 
+            className="player-top-bar-standalone" 
+            style={{ 
+              position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50, background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)', padding: '20px',
+              opacity: showStandaloneBar ? 1 : 0,
+              pointerEvents: showStandaloneBar ? 'auto' : 'none',
+              transition: 'opacity 0.3s ease'
+            }}
+            onMouseEnter={showStandaloneBarTemporarily}
+          >
             <button className="player-btn player-back-btn" onClick={onBack} data-focusable="true" style={{ fontSize: '18px' }}>← Back</button>
             <span style={{ color: 'white', marginLeft: 20, fontSize: '18px', fontWeight: 'bold' }}>{movie.title} (Drive Player)</span>
           </div>
+          {/* Invisible trigger area at the top to catch mouse moves even if iframe steals focus */}
+          <div 
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '40px', zIndex: 40 }}
+            onMouseMove={showStandaloneBarTemporarily}
+          />
           <iframe
             className="player-iframe"
             src={previewUrl}
