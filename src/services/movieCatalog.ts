@@ -106,7 +106,19 @@ async function fetchTmdbPoster(title: string): Promise<string | null> {
 export async function loadMovies(forceRefresh = false): Promise<Movie[]> {
   if (!forceRefresh) {
     const cached = getCachedCatalog();
-    if (cached) return cached;
+    if (cached) {
+      // Even with cached data, check if any movies need TMDB posters
+      if (appConfig.tmdbApiKey) {
+        const needsPosters = cached.some(m => {
+          const override = getMetadataOverride(m.id);
+          return !override?.posterUrl;
+        });
+        if (needsPosters) {
+          fetchMissingPosters(cached);
+        }
+      }
+      return cached;
+    }
   }
 
   // Always use Drive API to list files directly
@@ -153,18 +165,24 @@ async function fetchMissingPosters(movies: Movie[]) {
   for (const movie of movies) {
     const override = getMetadataOverride(movie.id);
     if (!override?.posterUrl) {
+      console.log(`[TMDB] Fetching poster for: "${movie.title}"`);
       const tmdbPoster = await fetchTmdbPoster(movie.title);
       if (tmdbPoster) {
+        console.log(`[TMDB] Found poster for "${movie.title}":`, tmdbPoster);
         const all = JSON.parse(localStorage.getItem('familyMovies_metadataOverrides') || '{}');
         all[movie.id] = { ...all[movie.id], posterUrl: tmdbPoster };
         localStorage.setItem('familyMovies_metadataOverrides', JSON.stringify(all));
         updated = true;
+      } else {
+        console.log(`[TMDB] No poster found for "${movie.title}"`);
       }
+    } else {
+      console.log(`[TMDB] Skipping "${movie.title}" - already has poster`);
     }
   }
   if (updated) {
+    console.log('[TMDB] Posters updated! Refreshing UI...');
     clearCatalogCache();
-    // Dispatch a custom event so the UI knows to re-render
     window.dispatchEvent(new CustomEvent('posters-updated'));
   }
 }
