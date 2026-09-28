@@ -41,12 +41,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    if (!window.google) {
+    if (!(window as any).google) {
       alert('Google Login script is still loading or failed to load. Please try again.');
       return;
     }
 
-    const client = window.google.accounts.oauth2.initTokenClient({
+    const client = (window as any).google.accounts.oauth2.initTokenClient({
       client_id: appConfig.googleClientId,
       scope: 'https://www.googleapis.com/auth/drive.readonly',
       callback: (response: any) => {
