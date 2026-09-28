@@ -30,8 +30,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build Web App
         run: npx vite build --base=/${{ github.event.repository.name }}/
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Sync Capacitor Android
+        run: npx cap sync android
+
+      - name: Build Android APK
+        working-directory: android
+        run: chmod +x gradlew && ./gradlew assembleDebug
+
+      - name: Move APK to Dist
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ./dist/nandurulz.apk
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

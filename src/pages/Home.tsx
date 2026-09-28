@@ -133,7 +133,7 @@ const Home: React.FC = () => {
               </button>
             )}
             <a
-              href="/nandurulz.apk"
+              href="nandurulz.apk"
               className="btn-secondary"
               style={{ textDecoration: 'none', padding: '8px 12px', fontSize: '14px', whiteSpace: 'nowrap' }}
               data-focusable="true"
