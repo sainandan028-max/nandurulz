@@ -141,32 +141,32 @@ export async function loadMovies(forceRefresh = false): Promise<Movie[]> {
 
   setCachedCatalog(movies);
 
-  // In the background, try to fetch high-res TMDB posters for movies that only have Google Drive thumbnails
+  // Fetch TMDB posters for movies that don't have a custom poster yet
   if (appConfig.tmdbApiKey) {
-    setTimeout(async () => {
-      let updated = false;
-      for (const movie of movies) {
-        const override = getMetadataOverride(movie.id);
-        // If there's no custom poster manually set by the user, try fetching one
-        if (!override?.posterUrl) {
-          const tmdbPoster = await fetchTmdbPoster(movie.title);
-          if (tmdbPoster) {
-            // Save it silently without immediately clearing the whole cache to prevent infinite loops, 
-            // but the NEXT time they reload it will use the high-res poster!
-            const all = JSON.parse(localStorage.getItem('familyMovies_metadataOverrides') || '{}');
-            all[movie.id] = { ...all[movie.id], posterUrl: tmdbPoster };
-            localStorage.setItem('familyMovies_metadataOverrides', JSON.stringify(all));
-            updated = true;
-          }
-        }
-      }
-      // If we found new posters, clear the catalog cache so next reload shows them
-      if (updated) {
-        clearCatalogCache();
-      }
-    }, 2000);
+    fetchMissingPosters(movies);
   }
   return movies;
+}
+
+async function fetchMissingPosters(movies: Movie[]) {
+  let updated = false;
+  for (const movie of movies) {
+    const override = getMetadataOverride(movie.id);
+    if (!override?.posterUrl) {
+      const tmdbPoster = await fetchTmdbPoster(movie.title);
+      if (tmdbPoster) {
+        const all = JSON.parse(localStorage.getItem('familyMovies_metadataOverrides') || '{}');
+        all[movie.id] = { ...all[movie.id], posterUrl: tmdbPoster };
+        localStorage.setItem('familyMovies_metadataOverrides', JSON.stringify(all));
+        updated = true;
+      }
+    }
+  }
+  if (updated) {
+    clearCatalogCache();
+    // Dispatch a custom event so the UI knows to re-render
+    window.dispatchEvent(new CustomEvent('posters-updated'));
+  }
 }
 
 export function sortMovies(movies: Movie[], mode: SortMode): Movie[] {

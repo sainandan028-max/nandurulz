@@ -53,6 +53,15 @@ const Home: React.FC = () => {
     fetchMovies();
   }, [fetchMovies]);
 
+  // Auto-refresh when TMDB posters are fetched in the background
+  useEffect(() => {
+    const handlePostersUpdated = () => {
+      loadMovies().then(data => setMovies(data));
+    };
+    window.addEventListener('posters-updated', handlePostersUpdated);
+    return () => window.removeEventListener('posters-updated', handlePostersUpdated);
+  }, []);
+
   const handleRefresh = () => {
     clearCatalogCache();
     fetchMovies(true);
