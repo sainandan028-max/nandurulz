@@ -131,7 +131,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
             )}
             <button
               className="btn-secondary btn-large"
-              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               data-focusable="true"
               onClick={() => {
                 const token = localStorage.getItem('gdrive_access_token');
@@ -141,15 +141,17 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
                 window.location.href = `vlc://${streamUrl}`;
               }}
             >
-              🟠 Open in VLC (TV/Mobile)
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              Play in VLC (External Player)
             </button>
           </div>
 
           {/* Video format notice */}
           <div className="details-notice">
             <p>
-              Playback depends on your browser and device capabilities.
-              If direct playback doesn't work, you'll be able to open the movie in Google Drive's player.
+              Note: For optimal playback quality and performance, we recommend using VLC Media Player on mobile devices and smart TVs. Alternatively, you can use the built-in Google Drive web player.
             </p>
           </div>
         </div>

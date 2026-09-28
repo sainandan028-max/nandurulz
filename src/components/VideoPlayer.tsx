@@ -140,7 +140,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 </button>
                 <button
                   className="btn-secondary"
-                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', gap: '8px' }}
                   data-focusable="true"
                   onClick={() => {
                     const token = localStorage.getItem('gdrive_access_token');
@@ -149,7 +149,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                     window.location.href = `vlc://${streamUrl}`;
                   }}
                 >
-                  🟠 Open in VLC (TV/Mobile)
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                  Play in VLC (External Player)
                 </button>
               </div>
             </div>
