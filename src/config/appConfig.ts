@@ -16,7 +16,7 @@ const appConfig: AppConfig = {
   googleClientId: '259012956341-ptdhcihhg0m6jddra5iamhiaci353ile.apps.googleusercontent.com',
 
   // TMDB API Key for automatic high-res movie posters (optional)
-  tmdbApiKey: '',
+  tmdbApiKey: '06260fb32ec4ee1fa7b8cf630cd08cb1',
 
   // Display name for your movie library
   siteName: 'NanduRulz',
