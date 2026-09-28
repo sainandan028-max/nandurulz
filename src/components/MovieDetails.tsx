@@ -129,41 +129,29 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
                 ▶ Play
               </button>
             )}
-            <button
-              className="btn-secondary btn-large"
-              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-              data-focusable="true"
-              onClick={() => {
-                const token = localStorage.getItem('gdrive_access_token');
-                const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
-                const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}&ext=.mp4`;
-                
-                const ua = navigator.userAgent.toLowerCase();
-                const isAndroid = ua.includes('android');
-                const isFireTV = ua.includes('silk') || ua.includes('aftb') || ua.includes('aftt') || ua.includes('aftm');
-                
-                if (isAndroid || isFireTV) {
-                  // Industry standard intent URL for Android. Prevents browser URL mangling (like the http://https:// bug).
-                  const intentUrl = `intent://${streamUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=org.videolan.vlc;end`;
-                  
-                  // Use a hidden <a> tag click to bypass strict browser popup/intent blockers
-                  const a = document.createElement('a');
-                  a.href = intentUrl;
-                  a.style.display = 'none';
-                  document.body.appendChild(a);
-                  a.click();
-                  setTimeout(() => document.body.removeChild(a), 100);
-                } else {
-                  // Desktop fallback
-                  window.open(streamUrl, '_blank');
-                }
-              }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-              Play in VLC (External Player)
-            </button>
+              <a
+                className="btn-secondary btn-large"
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+                data-focusable="true"
+                href={(() => {
+                  const token = localStorage.getItem('gdrive_access_token');
+                  const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
+                  return `vlc://https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
+                })()}
+                onClick={(e) => {
+                  // Only validate token, don't handle navigation
+                  const token = localStorage.getItem('gdrive_access_token');
+                  if (!token) {
+                    e.preventDefault();
+                    alert("You must log in with Google first!");
+                  }
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Play in VLC (Mobile/TV)
+              </a>
           </div>
 
           {/* Video format notice */}

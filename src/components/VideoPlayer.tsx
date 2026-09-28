@@ -138,37 +138,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 >
                   ▶ Google Drive Player
                 </button>
-                <button
+                <a
                   className="btn-secondary"
-                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', gap: '8px' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', gap: '8px', textDecoration: 'none' }}
                   data-focusable="true"
-                  onClick={() => {
+                  href={(() => {
                     const token = localStorage.getItem('gdrive_access_token');
                     const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
-                    const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}&ext=.mp4`;
-                    
-                    const ua = navigator.userAgent.toLowerCase();
-                    const isAndroid = ua.includes('android');
-                    const isFireTV = ua.includes('silk') || ua.includes('aftb') || ua.includes('aftt') || ua.includes('aftm');
-                    
-                    if (isAndroid || isFireTV) {
-                      const intentUrl = `intent://${streamUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=org.videolan.vlc;end`;
-                      const a = document.createElement('a');
-                      a.href = intentUrl;
-                      a.style.display = 'none';
-                      document.body.appendChild(a);
-                      a.click();
-                      setTimeout(() => document.body.removeChild(a), 100);
-                    } else {
-                      window.open(streamUrl, '_blank');
+                    return `vlc://https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
+                  })()}
+                  onClick={(e) => {
+                    const token = localStorage.getItem('gdrive_access_token');
+                    if (!token) {
+                      e.preventDefault();
+                      alert("You must log in with Google first!");
                     }
                   }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                   </svg>
-                  Play in VLC (External Player)
-                </button>
+                  Play in VLC (Mobile/TV)
+                </a>
               </div>
             </div>
           )}
