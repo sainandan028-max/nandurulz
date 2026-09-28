@@ -78,19 +78,38 @@ async function fetchTmdbPoster(title: string): Promise<string | null> {
   if (!appConfig.tmdbApiKey) return null;
   
   try {
-    // Clean title further for TMDB search
-    // 1. Remove anything in parentheses or brackets (e.g. (2026), [1080p])
+    // Extract year if present (e.g. "Champion (2025) Telugu" -> year = 2025)
+    const yearMatch = title.match(/\((\d{4})\)/);
+    const year = yearMatch ? yearMatch[1] : null;
+    
+    // Clean title for TMDB search
+    // 1. Remove anything in parentheses or brackets
     let cleanQuery = title.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '');
     // 2. Remove language tags
-    cleanQuery = cleanQuery.replace(/\b(telugu|tamil|hindi|malayalam|kannada|english)\b/gi, '');
+    cleanQuery = cleanQuery.replace(/\b(telugu|tamil|hindi|malayalam|kannada|english|bengali|marathi|gujarati|punjabi)\b/gi, '');
     // 3. Remove splitters and trim
     cleanQuery = cleanQuery.split('-')[0].trim();
     // 4. Remove extra spaces
     cleanQuery = cleanQuery.replace(/\s+/g, ' ');
     
-    const url = `https://api.themoviedb.org/3/search/movie?api_key=${appConfig.tmdbApiKey}&query=${encodeURIComponent(cleanQuery)}&page=1`;
-    const response = await fetch(url);
-    const data = await response.json();
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${appConfig.tmdbApiKey}&query=${encodeURIComponent(cleanQuery)}&page=1`;
+    // Add year for more accurate results
+    if (year) {
+      url += `&year=${year}`;
+    }
+    
+    console.log(`[TMDB] Searching: query="${cleanQuery}" year=${year || 'any'}`);
+    let response = await fetch(url);
+    let data = await response.json();
+    
+    // If no results with year filter, try without year
+    if ((!data.results || data.results.length === 0) && year) {
+      console.log(`[TMDB] No results with year=${year}, retrying without year...`);
+      url = `https://api.themoviedb.org/3/search/movie?api_key=${appConfig.tmdbApiKey}&query=${encodeURIComponent(cleanQuery)}&page=1`;
+      response = await fetch(url);
+      data = await response.json();
+    }
+    
     if (data.results && data.results.length > 0) {
       const posterPath = data.results[0].poster_path;
       if (posterPath) {
