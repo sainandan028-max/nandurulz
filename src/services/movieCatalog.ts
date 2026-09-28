@@ -74,6 +74,32 @@ function cleanFilenameAsTitle(filename: string): string {
 import appConfig from '../config/appConfig';
 import { saveMetadataOverride } from './metadata';
 
+// Bump this version whenever TMDB search logic changes to auto-clear old wrong posters
+const TMDB_POSTER_VERSION = 2;
+
+// Auto-clear stale TMDB posters when our search logic improves
+function autoMigrateTmdbPosters() {
+  const storedVersion = parseInt(localStorage.getItem('tmdb_poster_version') || '0');
+  if (storedVersion < TMDB_POSTER_VERSION) {
+    console.log(`[TMDB] Poster logic upgraded (v${storedVersion} → v${TMDB_POSTER_VERSION}). Re-fetching all posters...`);
+    // Clear only posterUrl from overrides, keep user's custom titles/categories
+    try {
+      const all = JSON.parse(localStorage.getItem('familyMovies_metadataOverrides') || '{}');
+      for (const id of Object.keys(all)) {
+        if (all[id].posterUrl) {
+          delete all[id].posterUrl;
+        }
+      }
+      localStorage.setItem('familyMovies_metadataOverrides', JSON.stringify(all));
+    } catch { /* ignore */ }
+    clearCatalogCache();
+    localStorage.setItem('tmdb_poster_version', String(TMDB_POSTER_VERSION));
+  }
+}
+
+// Run migration on load
+autoMigrateTmdbPosters();
+
 async function fetchTmdbPoster(title: string): Promise<string | null> {
   if (!appConfig.tmdbApiKey) return null;
   
