@@ -144,24 +144,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   data-focusable="true"
                   onClick={() => {
                     const token = localStorage.getItem('gdrive_access_token');
-                    if (!token) {
-                      alert("You must log in with Google first!");
-                      return;
-                    }
-                    const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&access_token=${token}`;
-                    
-                    navigator.clipboard.writeText(streamUrl).then(() => {
-                      alert("Stream URL copied to clipboard!\n\nOpen VLC → Menu → Open Network Stream → Paste the URL → Play");
-                    }).catch(() => {
-                      prompt("Copy this URL and paste it in VLC → Open Network Stream:", streamUrl);
-                    });
+                    const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
+                    const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
+                    window.location.href = `vlc://${streamUrl}`;
                   }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
                   </svg>
-                  Copy Stream URL for VLC
+                  Play in VLC (External Player)
                 </button>
               </div>
             </div>
