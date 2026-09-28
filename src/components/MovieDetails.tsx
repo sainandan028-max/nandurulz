@@ -129,34 +129,12 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
                 ▶ Play
               </button>
             )}
-              <a
-                className="btn-secondary btn-large"
-                style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                data-focusable="true"
-                href={(() => {
-                  const token = localStorage.getItem('gdrive_access_token');
-                  const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
-                  return `intent://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}#Intent;package=org.videolan.vlc;scheme=https;type=video/*;end`;
-                })()}
-                onClick={(e) => {
-                  const token = localStorage.getItem('gdrive_access_token');
-                  if (!token) {
-                    e.preventDefault();
-                    alert("You must log in with Google first to bypass the rate limits!");
-                  }
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                Play in VLC (Mobile/TV)
-              </a>
           </div>
 
           {/* Video format notice */}
           <div className="details-notice">
             <p>
-              Note: For optimal playback quality and performance, we recommend using VLC Media Player on mobile devices and smart TVs. Alternatively, you can use the built-in Google Drive web player.
+              Note: Movies are played securely through the built-in web player to bypass Google Drive rate limits.
             </p>
           </div>
         </div>
