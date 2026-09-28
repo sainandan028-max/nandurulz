@@ -163,13 +163,11 @@ select:focus-visible {
    HEADER
    ═══════════════════════════════════════════════════════════════ */
 .app-header {
-  background: linear-gradient(180deg, var(--bg-secondary) 0%, transparent 100%);
+  background: var(--bg-primary);
   padding: var(--spacing-lg) var(--spacing-xl);
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-subtle);
 }
 
