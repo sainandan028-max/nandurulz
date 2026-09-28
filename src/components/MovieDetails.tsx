@@ -129,41 +129,33 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
                 ▶ Play
               </button>
             )}
-              <a
-                className="btn-secondary btn-large"
-                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
-                data-focusable="true"
-                href={(() => {
-                  const token = localStorage.getItem('gdrive_access_token');
-                  if (!token) return '#';
-                  const expiry = localStorage.getItem('gdrive_token_expiry');
-                  if (expiry && Date.now() > parseInt(expiry, 10)) return '#';
-                  
-                  const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&access_token=${token}&ext=.mp4`;
-                  // Use Android intent format which works natively when clicked as an <a> tag
-                  return `intent://${streamUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=org.videolan.vlc;type=video/*;end`;
-                })()}
-                onClick={(e) => {
-                  const token = localStorage.getItem('gdrive_access_token');
-                  if (!token) {
-                    e.preventDefault();
-                    alert("You must log in with Google first to play movies in VLC without rate limits!");
-                    return;
-                  }
-                  const expiry = localStorage.getItem('gdrive_token_expiry');
-                  if (expiry && Date.now() > parseInt(expiry, 10)) {
-                    e.preventDefault();
-                    localStorage.removeItem('gdrive_access_token');
-                    alert("Your Google login session expired. Please log in again at the top of the page.");
-                    window.location.reload();
-                  }
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                Play in VLC (External Player)
-              </a>
+            <button
+              className="btn-secondary btn-large"
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              data-focusable="true"
+              onClick={() => {
+                const token = localStorage.getItem('gdrive_access_token');
+                if (!token) {
+                  alert("You must log in with Google first!");
+                  return;
+                }
+                const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&access_token=${token}`;
+                
+                // Copy to clipboard first (guaranteed to work everywhere)
+                navigator.clipboard.writeText(streamUrl).then(() => {
+                  alert("Stream URL copied to clipboard!\n\nOpen VLC → Menu → Open Network Stream → Paste the URL → Play");
+                }).catch(() => {
+                  // Fallback for browsers that block clipboard API
+                  prompt("Copy this URL and paste it in VLC → Open Network Stream:", streamUrl);
+                });
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Copy Stream URL for VLC
+            </button>
           </div>
 
           {/* Video format notice */}
