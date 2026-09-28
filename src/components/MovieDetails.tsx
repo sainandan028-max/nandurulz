@@ -136,11 +136,27 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
               onClick={() => {
                 const token = localStorage.getItem('gdrive_access_token');
                 const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
-                // VLC prepends http:// to whatever comes after vlc://
-                // So we must NOT include https:// — otherwise VLC creates http://https://... (broken!)
-                // Google auto-redirects http to https, so this works perfectly
-                const streamPath = `www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
-                window.location.href = `vlc://${streamPath}`;
+                const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}&ext=.mp4`;
+                
+                const ua = navigator.userAgent.toLowerCase();
+                const isAndroid = ua.includes('android');
+                const isFireTV = ua.includes('silk') || ua.includes('aftb') || ua.includes('aftt') || ua.includes('aftm');
+                
+                if (isAndroid || isFireTV) {
+                  // Industry standard intent URL for Android. Prevents browser URL mangling (like the http://https:// bug).
+                  const intentUrl = `intent://${streamUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=org.videolan.vlc;end`;
+                  
+                  // Use a hidden <a> tag click to bypass strict browser popup/intent blockers
+                  const a = document.createElement('a');
+                  a.href = intentUrl;
+                  a.style.display = 'none';
+                  document.body.appendChild(a);
+                  a.click();
+                  setTimeout(() => document.body.removeChild(a), 100);
+                } else {
+                  // Desktop fallback
+                  window.open(streamUrl, '_blank');
+                }
               }}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

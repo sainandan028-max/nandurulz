@@ -145,8 +145,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   onClick={() => {
                     const token = localStorage.getItem('gdrive_access_token');
                     const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
-                    const streamPath = `www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
-                    window.location.href = `vlc://${streamPath}`;
+                    const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}&ext=.mp4`;
+                    
+                    const ua = navigator.userAgent.toLowerCase();
+                    const isAndroid = ua.includes('android');
+                    const isFireTV = ua.includes('silk') || ua.includes('aftb') || ua.includes('aftt') || ua.includes('aftm');
+                    
+                    if (isAndroid || isFireTV) {
+                      const intentUrl = `intent://${streamUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=org.videolan.vlc;end`;
+                      const a = document.createElement('a');
+                      a.href = intentUrl;
+                      a.style.display = 'none';
+                      document.body.appendChild(a);
+                      a.click();
+                      setTimeout(() => document.body.removeChild(a), 100);
+                    } else {
+                      window.open(streamUrl, '_blank');
+                    }
                   }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
