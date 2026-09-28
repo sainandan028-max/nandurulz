@@ -137,7 +137,19 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
                 const token = localStorage.getItem('gdrive_access_token');
                 const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
                 const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
-                window.location.href = `vlc://${streamUrl}`;
+                
+                const ua = navigator.userAgent.toLowerCase();
+                const isAndroid = ua.includes('android');
+                const isFireTV = ua.includes('silk') || ua.includes('aftb') || ua.includes('aftt') || ua.includes('aftm');
+                
+                if (isAndroid || isFireTV) {
+                  // On Android/Fire TV, vlc:// scheme is registered by VLC app
+                  window.location.href = `vlc://${streamUrl}`;
+                } else {
+                  // On desktop (Windows/Mac/Linux), open stream directly in new tab
+                  // The browser will either play it or offer to download it
+                  window.open(streamUrl, '_blank');
+                }
               }}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
