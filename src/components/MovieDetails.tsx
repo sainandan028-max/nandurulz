@@ -138,9 +138,8 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
                 const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
                 // Adding a fake .mp4 extension parameter tricks VLC into recognizing the stream as a video
                 const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}&ext=.mp4`;
-                // Android intent format (much more reliable than vlc:// on Chrome for Android)
-                const intentUrl = `intent://${streamUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=org.videolan.vlc;type=video/*;title=${encodeURIComponent(movie.title)};end`;
-                window.location.href = intentUrl;
+                // Use vlc:// scheme which successfully launched the app previously
+                window.location.href = `vlc://${streamUrl}`;
               }}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
