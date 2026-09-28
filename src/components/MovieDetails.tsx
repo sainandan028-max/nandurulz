@@ -129,36 +129,6 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
                 ▶ Play
               </button>
             )}
-            <button
-              className="btn-secondary btn-large"
-              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-              data-focusable="true"
-              onClick={(e) => {
-                e.preventDefault();
-                const token = localStorage.getItem('gdrive_access_token');
-                if (!token) {
-                  alert("You must log in with Google first to bypass the rate limits!");
-                  return;
-                }
-                
-                // Dynamically build the URL here to guarantee we always use the freshest token!
-                // Using video/x-matroska forces VLC to properly decode the MKV file even when Google Drive redirects.
-                const intentUrl = `intent://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&access_token=${token}#Intent;package=org.videolan.vlc;scheme=https;type=video/x-matroska;end`;
-                
-                // Use a hidden a tag to prevent URL mangling while still executing dynamically
-                const a = document.createElement('a');
-                a.href = intentUrl;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(() => document.body.removeChild(a), 100);
-              }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-              Play in VLC (Mobile/TV)
-            </button>
           </div>
 
           {/* Video format notice */}
