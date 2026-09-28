@@ -78,8 +78,16 @@ async function fetchTmdbPoster(title: string): Promise<string | null> {
   if (!appConfig.tmdbApiKey) return null;
   
   try {
-    // Clean title further for TMDB search (remove anything in parentheses, etc)
-    const cleanQuery = title.replace(/\(.*?\)/g, '').split('-')[0].trim();
+    // Clean title further for TMDB search
+    // 1. Remove anything in parentheses or brackets (e.g. (2026), [1080p])
+    let cleanQuery = title.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '');
+    // 2. Remove language tags
+    cleanQuery = cleanQuery.replace(/\b(telugu|tamil|hindi|malayalam|kannada|english)\b/gi, '');
+    // 3. Remove splitters and trim
+    cleanQuery = cleanQuery.split('-')[0].trim();
+    // 4. Remove extra spaces
+    cleanQuery = cleanQuery.replace(/\s+/g, ' ');
+    
     const url = `https://api.themoviedb.org/3/search/movie?api_key=${appConfig.tmdbApiKey}&query=${encodeURIComponent(cleanQuery)}&page=1`;
     const response = await fetch(url);
     const data = await response.json();
