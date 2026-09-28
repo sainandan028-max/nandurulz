@@ -131,15 +131,14 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
             )}
               <a
                 className="btn-secondary btn-large"
-                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+                style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 data-focusable="true"
                 href={(() => {
                   const token = localStorage.getItem('gdrive_access_token');
                   const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
-                  return `vlc://https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
+                  return `intent://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}#Intent;package=org.videolan.vlc;scheme=https;type=video/*;end`;
                 })()}
                 onClick={(e) => {
-                  // Only validate token, don't handle navigation
                   const token = localStorage.getItem('gdrive_access_token');
                   if (!token) {
                     e.preventDefault();

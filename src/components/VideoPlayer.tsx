@@ -140,12 +140,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 </button>
                 <a
                   className="btn-secondary"
-                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', gap: '8px', textDecoration: 'none' }}
+                  style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', gap: '8px' }}
                   data-focusable="true"
                   href={(() => {
                     const token = localStorage.getItem('gdrive_access_token');
                     const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
-                    return `vlc://https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
+                    return `intent://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}#Intent;package=org.videolan.vlc;scheme=https;type=video/*;end`;
                   })()}
                   onClick={(e) => {
                     const token = localStorage.getItem('gdrive_access_token');
