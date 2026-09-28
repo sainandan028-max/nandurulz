@@ -62,10 +62,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   // Build the direct URL using a streaming-compatible approach
   const getDirectStreamUrl = useCallback(() => {
     // Use the OAuth access token if available to bypass quotas, otherwise fallback to API key
-    const authParam = localStorage.getItem('gdrive_access_token') 
-      ? `access_token=${localStorage.getItem('gdrive_access_token')}` 
+    const authParam = localStorage.getItem('gdrive_access_token')
+      ? `access_token=${localStorage.getItem('gdrive_access_token')}`
       : `key=${appConfig.googleApiKey}`;
-      
+
     return `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
   }, [movie.driveFileId]);
 
@@ -130,8 +130,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
             }}>
               <p style={{ margin: '0 0 15px 0' }}>{errorMessage}</p>
               <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <button 
-                  className="btn-primary" 
+                <button
+                  className="btn-primary"
                   onClick={() => setPlayerMode('preview')}
                   style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
                   data-focusable="true"
@@ -145,17 +145,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   onClick={() => {
                     const token = localStorage.getItem('gdrive_access_token');
                     const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
-                    const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
-                    
-                    const ua = navigator.userAgent.toLowerCase();
-                    const isAndroid = ua.includes('android');
-                    const isFireTV = ua.includes('silk') || ua.includes('aftb') || ua.includes('aftt') || ua.includes('aftm');
-                    
-                    if (isAndroid || isFireTV) {
-                      window.location.href = `vlc://${streamUrl}`;
-                    } else {
-                      window.open(streamUrl, '_blank');
-                    }
+                    const streamPath = `www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
+                    window.location.href = `vlc://${streamPath}`;
                   }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -182,9 +173,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </>
       ) : (
         <>
-          <div 
-            className="player-top-bar-standalone" 
-            style={{ 
+          <div
+            className="player-top-bar-standalone"
+            style={{
               position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50, background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)', padding: '20px',
               opacity: showStandaloneBar ? 1 : 0,
               pointerEvents: showStandaloneBar ? 'auto' : 'none',
@@ -196,7 +187,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
             <span style={{ color: 'white', marginLeft: 20, fontSize: '18px', fontWeight: 'bold' }}>{movie.title} (Drive Player)</span>
           </div>
           {/* Invisible trigger area at the top to catch mouse moves even if iframe steals focus */}
-          <div 
+          <div
             style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '40px', zIndex: 40 }}
             onMouseMove={showStandaloneBarTemporarily}
           />
