@@ -132,15 +132,6 @@ const Home: React.FC = () => {
                 Sign in with Google
               </button>
             )}
-            <a
-              href="nandurulz.apk"
-              className="btn-secondary"
-              style={{ textDecoration: 'none', padding: '8px 12px', fontSize: '14px', whiteSpace: 'nowrap' }}
-              data-focusable="true"
-              download="nandurulz.apk"
-            >
-              📺 Download TV App
-            </a>
             <button
               className="btn-icon refresh-btn"
               onClick={handleRefresh}
