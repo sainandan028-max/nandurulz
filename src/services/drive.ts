@@ -50,7 +50,15 @@ export async function listDriveFolderVideos(): Promise<DriveFile[]> {
     params.append('key', googleApiKey);
   }
 
-  const response = await fetch(`${DRIVE_API_BASE}/files?${params}`);
+  let response = await fetch(`${DRIVE_API_BASE}/files?${params}`);
+
+  // If the OAuth token is expired/invalid, clear it and retry with API key
+  if (!response.ok && (response.status === 401 || response.status === 403) && accessToken) {
+    localStorage.removeItem('gdrive_access_token');
+    params.delete('access_token');
+    params.append('key', googleApiKey);
+    response = await fetch(`${DRIVE_API_BASE}/files?${params}`);
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
