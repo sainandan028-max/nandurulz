@@ -34,6 +34,7 @@ export interface AppConfig {
   driveFolderId: string;
   googleApiKey: string;
   googleClientId?: string;
+  tmdbApiKey?: string;
   siteName: string;
   catalogMode: CatalogMode;
 }

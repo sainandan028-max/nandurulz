@@ -71,6 +71,30 @@ function cleanFilenameAsTitle(filename: string): string {
   return title.trim().replace(/\s+/g, ' ');
 }
 
+import appConfig from '../config/appConfig';
+import { saveMetadataOverride } from './metadata';
+
+async function fetchTmdbPoster(title: string): Promise<string | null> {
+  if (!appConfig.tmdbApiKey) return null;
+  
+  try {
+    // Clean title further for TMDB search (remove anything in parentheses, etc)
+    const cleanQuery = title.replace(/\(.*?\)/g, '').split('-')[0].trim();
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=${appConfig.tmdbApiKey}&query=${encodeURIComponent(cleanQuery)}&page=1`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.results && data.results.length > 0) {
+      const posterPath = data.results[0].poster_path;
+      if (posterPath) {
+        return `https://image.tmdb.org/t/p/w600_and_h900_bestv2${posterPath}`;
+      }
+    }
+  } catch {
+    // Ignore errors
+  }
+  return null;
+}
+
 export async function loadMovies(forceRefresh = false): Promise<Movie[]> {
   if (!forceRefresh) {
     const cached = getCachedCatalog();
@@ -108,6 +132,32 @@ export async function loadMovies(forceRefresh = false): Promise<Movie[]> {
   });
 
   setCachedCatalog(movies);
+
+  // In the background, try to fetch high-res TMDB posters for movies that only have Google Drive thumbnails
+  if (appConfig.tmdbApiKey) {
+    setTimeout(async () => {
+      let updated = false;
+      for (const movie of movies) {
+        const override = getMetadataOverride(movie.id);
+        // If there's no custom poster manually set by the user, try fetching one
+        if (!override?.posterUrl) {
+          const tmdbPoster = await fetchTmdbPoster(movie.title);
+          if (tmdbPoster) {
+            // Save it silently without immediately clearing the whole cache to prevent infinite loops, 
+            // but the NEXT time they reload it will use the high-res poster!
+            const all = JSON.parse(localStorage.getItem('familyMovies_metadataOverrides') || '{}');
+            all[movie.id] = { ...all[movie.id], posterUrl: tmdbPoster };
+            localStorage.setItem('familyMovies_metadataOverrides', JSON.stringify(all));
+            updated = true;
+          }
+        }
+      }
+      // If we found new posters, clear the catalog cache so next reload shows them
+      if (updated) {
+        clearCatalogCache();
+      }
+    }, 2000);
+  }
   return movies;
 }
 

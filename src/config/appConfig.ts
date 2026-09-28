@@ -15,6 +15,9 @@ const appConfig: AppConfig = {
   // Google OAuth Client ID for authenticating users to bypass API rate limits
   googleClientId: '259012956341-ptdhcihhg0m6jddra5iamhiaci353ile.apps.googleusercontent.com',
 
+  // TMDB API Key for automatic high-res movie posters (optional)
+  tmdbApiKey: '',
+
   // Display name for your movie library
   siteName: 'NanduRulz',
 
