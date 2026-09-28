@@ -142,23 +142,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   className="btn-secondary"
                   style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', gap: '8px' }}
                   data-focusable="true"
-                  onClick={async () => {
+                  onClick={() => {
                     const token = localStorage.getItem('gdrive_access_token');
                     if (!token) {
                       alert("You must log in with Google first to play movies in VLC without rate limits!");
                       return;
                     }
                     
-                    try {
-                      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?fields=id&access_token=${token}`);
-                      if (res.status === 401 || res.status === 403) {
-                        localStorage.removeItem('gdrive_access_token');
-                        alert("Your Google login session expired. Please log in again at the top of the page.");
-                        window.location.reload();
-                        return;
-                      }
-                    } catch (e) {
-                      // ignore
+                    const expiry = localStorage.getItem('gdrive_token_expiry');
+                    if (expiry && Date.now() > parseInt(expiry, 10)) {
+                      localStorage.removeItem('gdrive_access_token');
+                      alert("Your Google login session expired. Please log in again at the top of the page.");
+                      window.location.reload();
+                      return;
                     }
 
                     const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&access_token=${token}&ext=.mp4`;

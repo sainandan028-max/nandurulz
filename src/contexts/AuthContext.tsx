@@ -57,6 +57,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         setAccessToken(response.access_token);
         localStorage.setItem('gdrive_access_token', response.access_token);
+        // Tokens expire in 1 hour (3600s). We set expiry to 55 minutes from now to be safe.
+        localStorage.setItem('gdrive_token_expiry', (Date.now() + 55 * 60 * 1000).toString());
       },
     });
 
