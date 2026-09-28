@@ -135,8 +135,11 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
               data-focusable="true"
               onClick={() => {
                 const token = localStorage.getItem('gdrive_access_token');
-                const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
-                const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}&ext=.mp4`;
+                if (!token) {
+                  alert("You must log in with Google first to play movies in VLC without rate limits!");
+                  return;
+                }
+                const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&access_token=${token}&ext=.mp4`;
                 window.location.href = `vlc://${streamUrl}`;
               }}
             >
