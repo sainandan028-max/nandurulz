@@ -138,34 +138,40 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 >
                   ▶ Google Drive Player
                 </button>
-                <button
+                <a
                   className="btn-secondary"
-                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', gap: '8px' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', gap: '8px', textDecoration: 'none' }}
                   data-focusable="true"
-                  onClick={() => {
+                  href={(() => {
+                    const token = localStorage.getItem('gdrive_access_token');
+                    if (!token) return '#';
+                    const expiry = localStorage.getItem('gdrive_token_expiry');
+                    if (expiry && Date.now() > parseInt(expiry, 10)) return '#';
+                    
+                    const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&access_token=${token}&ext=.mp4`;
+                    return `intent://${streamUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=org.videolan.vlc;type=video/*;end`;
+                  })()}
+                  onClick={(e) => {
                     const token = localStorage.getItem('gdrive_access_token');
                     if (!token) {
+                      e.preventDefault();
                       alert("You must log in with Google first to play movies in VLC without rate limits!");
                       return;
                     }
-                    
                     const expiry = localStorage.getItem('gdrive_token_expiry');
                     if (expiry && Date.now() > parseInt(expiry, 10)) {
+                      e.preventDefault();
                       localStorage.removeItem('gdrive_access_token');
                       alert("Your Google login session expired. Please log in again at the top of the page.");
                       window.location.reload();
-                      return;
                     }
-
-                    const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&access_token=${token}&ext=.mp4`;
-                    window.location.href = `vlc://${streamUrl}`;
                   }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                   </svg>
                   Play in VLC (External Player)
-                </button>
+                </a>
               </div>
             </div>
           )}
