@@ -133,7 +133,8 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
               className="btn-secondary btn-large"
               style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               data-focusable="true"
-              href={`intent://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&key=${appConfig.googleApiKey}#Intent;package=org.videolan.vlc;scheme=https;type=video/*;end`}
+              href={`intent://drive.google.com/uc?export=download&confirm=t&id=${movie.driveFileId}#Intent;package=org.videolan.vlc;scheme=https;type=video/*;end`}
+              onClick={() => alert("Attempting to open in VLC. If it fails, the movie has exceeded Google's 24-hour download limit.")}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
