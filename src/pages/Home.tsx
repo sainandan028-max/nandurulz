@@ -14,10 +14,12 @@ import MovieGrid from '../components/MovieGrid';
 import SearchBar from '../components/SearchBar';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useRemoteNavigation } from '../hooks/useRemoteNavigation';
+import { useAuth } from '../contexts/AuthContext';
 import appConfig from '../config/appConfig';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, login, logout } = useAuth();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -111,6 +113,34 @@ const Home: React.FC = () => {
           <h1 className="app-title">{appConfig.siteName}</h1>
           <div className="header-actions">
             <SearchBar onSearch={handleSearch} />
+            {isAuthenticated ? (
+              <button
+                className="btn-secondary"
+                onClick={logout}
+                data-focusable="true"
+                style={{ padding: '8px 12px', fontSize: '14px', whiteSpace: 'nowrap' }}
+              >
+                Sign Out
+              </button>
+            ) : (
+              <button
+                className="btn-primary"
+                onClick={login}
+                data-focusable="true"
+                style={{ background: '#4285f4', border: 'none', padding: '8px 12px', fontSize: '14px', whiteSpace: 'nowrap' }}
+              >
+                Sign in with Google
+              </button>
+            )}
+            <a
+              href="/nandurulz.apk"
+              className="btn-secondary"
+              style={{ textDecoration: 'none', padding: '8px 12px', fontSize: '14px', whiteSpace: 'nowrap' }}
+              data-focusable="true"
+              download="nandurulz.apk"
+            >
+              📺 Download TV App
+            </a>
             <button
               className="btn-icon refresh-btn"
               onClick={handleRefresh}

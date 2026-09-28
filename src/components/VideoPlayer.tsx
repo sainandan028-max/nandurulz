@@ -61,8 +61,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   // Build the direct URL using a streaming-compatible approach
   const getDirectStreamUrl = useCallback(() => {
-    // Use the Drive API alt=media endpoint to bypass the virus scan HTML page
-    return `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&key=${appConfig.googleApiKey}`;
+    // Use the OAuth access token if available to bypass quotas, otherwise fallback to API key
+    const authParam = localStorage.getItem('gdrive_access_token') 
+      ? `access_token=${localStorage.getItem('gdrive_access_token')}` 
+      : `key=${appConfig.googleApiKey}`;
+      
+    return `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
   }, [movie.driveFileId]);
 
   // Set initial time after video loads metadata

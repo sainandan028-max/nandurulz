@@ -12,6 +12,9 @@ const appConfig: AppConfig = {
   // Google Cloud API key (restricted to Drive API + your domain)
   googleApiKey: 'AIzaSyAaEQUd7kVPStmIxwbtQMD9ZWwbhZlHzhg',
 
+  // Google OAuth Client ID for authenticating users to bypass API rate limits
+  googleClientId: '',
+
   // Display name for your movie library
   siteName: 'NanduRulz',
 

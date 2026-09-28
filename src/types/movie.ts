@@ -33,6 +33,7 @@ export interface CatalogMode {
 export interface AppConfig {
   driveFolderId: string;
   googleApiKey: string;
+  googleClientId?: string;
   siteName: string;
   catalogMode: CatalogMode;
 }

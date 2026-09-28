@@ -36,13 +36,19 @@ export async function listDriveFolderVideos(): Promise<DriveFile[]> {
 
   const params = new URLSearchParams({
     q: query,
-    key: googleApiKey,
     fields: 'files(id,name,mimeType,modifiedTime,size,thumbnailLink,resourceKey,webViewLink)',
     pageSize: '1000',
     orderBy: 'name',
     includeItemsFromAllDrives: 'true',
     supportsAllDrives: 'true',
   });
+
+  const accessToken = localStorage.getItem('gdrive_access_token');
+  if (accessToken) {
+    params.append('access_token', accessToken);
+  } else {
+    params.append('key', googleApiKey);
+  }
 
   const response = await fetch(`${DRIVE_API_BASE}/files?${params}`);
 
