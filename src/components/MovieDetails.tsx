@@ -129,14 +129,20 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onPlay, onBack }) =>
                 ▶ Play
               </button>
             )}
-            <a
-              href={`intent://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${localStorage.getItem('gdrive_access_token') ? `access_token=${localStorage.getItem('gdrive_access_token')}` : `key=${appConfig.googleApiKey}`}#Intent;package=org.videolan.vlc;scheme=https;type=video/*;end`}
+            <button
               className="btn-secondary btn-large"
-              style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               data-focusable="true"
+              onClick={() => {
+                const token = localStorage.getItem('gdrive_access_token');
+                const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
+                const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}`;
+                // Try vlc:// scheme (works on mobile)
+                window.location.href = `vlc://${streamUrl}`;
+              }}
             >
               🟠 Open in VLC (TV/Mobile)
-            </a>
+            </button>
           </div>
 
           {/* Video format notice */}

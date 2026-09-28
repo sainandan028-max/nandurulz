@@ -33,27 +33,6 @@ jobs:
       - name: Build Web App
         run: npx vite build --base=/${{ github.event.repository.name }}/
 
-      # APK build steps - continue even if they fail so the website always deploys
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        continue-on-error: true
-        with:
-          distribution: 'zulu'
-          java-version: '21'
-
-      - name: Sync Capacitor Android
-        run: npx cap sync android
-        continue-on-error: true
-
-      - name: Build Android APK
-        working-directory: android
-        run: chmod +x gradlew && ./gradlew assembleDebug
-        continue-on-error: true
-
-      - name: Move APK to Dist
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk ./dist/nandurulz.apk
-        continue-on-error: true
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
