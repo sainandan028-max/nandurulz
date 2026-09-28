@@ -146,7 +146,21 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                     const token = localStorage.getItem('gdrive_access_token');
                     const authParam = token ? `access_token=${token}` : `key=${appConfig.googleApiKey}`;
                     const streamUrl = `https://www.googleapis.com/drive/v3/files/${movie.driveFileId}?alt=media&${authParam}&ext=.mp4`;
-                    window.location.href = `vlc://${streamUrl}`;
+                    
+                    const m3uContent = `#EXTM3U\n#EXTINF:-1,${movie.title}\n${streamUrl}`;
+                    const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `${movie.title.replace(/[^a-z0-9]/gi, '_')}.m3u`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    setTimeout(() => {
+                      document.body.removeChild(a);
+                      URL.revokeObjectURL(url);
+                    }, 1000);
                   }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
